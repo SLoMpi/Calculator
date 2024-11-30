@@ -13,8 +13,8 @@ double Cos(double x) {
     return (round(cos(x) * 10000000) / 10000000);
 }
 
-double Ctg(double x) { // Функция для расчета котангенса
-    double a = cos(x);
+double Ctg(double x) {
+    double a = Cos(x);
     double b = Sin(x);
     return (a / b);
 }
@@ -111,11 +111,11 @@ bool Math(stack<Lecksema>& Stack_n, stack<Lecksema>& Stack_o, Lecksema& item) {
 
 int main() {
     string input;
+    cout<<"Функции которые вы можете использовать: sin, cos, tan, ctg, exp\n";
     cout << "Введите выражение: ";
     getline(cin, input);
     char cheke;
 
-    // Проверка на наличие переменной x
     bool x_present = false;
     for (char ch : input) {
         if (ch == 'x'&&cheke!='e') {
@@ -125,28 +125,24 @@ int main() {
         cheke = ch;
     }
 
-    // Если переменная x есть, запрашиваем ее значение и подставляем в выражение
     if (x_present) {
         double x_value;
         cout << "Введите x=";
         cin >> x_value;
 
-        // Преобразуем значение x в строку с учетом возможных десятичных знаков
         string x_str = to_string(x_value);
 
-        // Заменяем все вхождения x на x_value в строке input
         size_t pos = 0;
         while ((pos = input.find('x', pos)) != string::npos) {
             if (pos > 0 && input[pos - 1] == 'e' && pos + 1 < input.size() && input[pos + 1] == 'p') {
-                pos++; // Пропускаем это вхождение
+                pos++;
                 continue;
             }
             input.replace(pos, 1, "(" + x_str + ")");
-            pos += x_str.length() + 2; // +2 для скобок
+            pos += x_str.length() + 2;
         }
     }
 
-    // Теперь преобразуем строку input в поток для дальнейшей обработки
     istringstream iss(input);
     char Ch;
     double value;
@@ -157,7 +153,8 @@ int main() {
 
     while (1) {
         Ch = iss.peek();
-        if ( Ch == '\n') break;
+        if (Ch == EOF) break;
+        if (Ch == '\n') break;
         if (Ch == ' ') {
             iss.ignore();
             continue;
@@ -252,7 +249,6 @@ int main() {
             iss.ignore();
             continue;
         }
-        // Если символ не распознан
         cerr << "Ошибка: Нераспознанный символ '" << Ch << "'." << endl;
         return 1;
     }
