@@ -130,8 +130,8 @@ int main() {
                 pos++;
                 continue;
             }
-            input.replace(pos, 1, "(" + x_str + ")");
-            pos += x_str.length() + 2;
+            input.replace(pos, 1, x_str );
+            pos += x_str.length() ;
         }
     }
 
