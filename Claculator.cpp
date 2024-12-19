@@ -10,7 +10,7 @@ double Sin(double x) {
 }
 
 double Cos(double x) {
-    return (round(cos(x) * 10000000) / 10000000);
+    return (round(cos(x) * 100000000) / 100000000);
 }
 
 double Ctg(double x) {
@@ -19,10 +19,6 @@ double Ctg(double x) {
     return (a / b);
 }
 
-struct Lecksema {
-    char type;
-    double value;
-};
 
 int Rang(char Ch) {
     if (Ch == '+' || Ch == '-') return 1;
@@ -31,32 +27,32 @@ int Rang(char Ch) {
     else return 0;
 }
 
-bool Math(stack<Lecksema>& Stack_n, stack<Lecksema>& Stack_o, Lecksema& item) {
+bool Math(stack<double>& Stack_n, stack<char>& Stack_o) {
     double a, b, c;
-    a = Stack_n.top().value;
+    a = Stack_n.top();
     Stack_n.pop();
 
-    switch (Stack_o.top().type) {
+    switch (Stack_o.top()) {
         case '+': {
-            b = Stack_n.top().value;
+            b = Stack_n.top();
             Stack_n.pop();
             c = b + a;
             break;
         }
         case '-': {
-            b = Stack_n.top().value;
+            b = Stack_n.top();
             Stack_n.pop();
             c = b - a;
             break;
         }
         case '*': {
-            b = Stack_n.top().value;
+            b = Stack_n.top();
             Stack_n.pop();
             c = b * a;
             break;
         }
         case '/': {
-            b = Stack_n.top().value;
+            b = Stack_n.top();
             Stack_n.pop();
             if (a == 0) {
                 cerr << "Ошибка: Деление на ноль." << endl;
@@ -103,9 +99,7 @@ bool Math(stack<Lecksema>& Stack_n, stack<Lecksema>& Stack_o, Lecksema& item) {
         }
     }
     Stack_o.pop();
-    item.type = '0';
-    item.value = c;
-    Stack_n.push(item);
+    Stack_n.push(c);
     return true;
 }
 
@@ -126,11 +120,9 @@ int main() {
     }
 
     if (x_present) {
-        double x_value;
+        string x_str;
         cout << "Введите x=";
-        cin >> x_value;
-
-        string x_str = to_string(x_value);
+        cin >> x_str;
 
         size_t pos = 0;
         while ((pos = input.find('x', pos)) != string::npos) {
@@ -147,9 +139,8 @@ int main() {
     char Ch;
     double value;
     bool flag = 1;
-    stack<Lecksema> Stack_n;
-    stack<Lecksema> Stack_o;
-    Lecksema item;
+    stack<double> Stack_n;
+    stack<char> Stack_o;
 
     while (1) {
         Ch = iss.peek();
@@ -167,33 +158,23 @@ int main() {
                 iss.ignore();
             }
             if (array[0] == 's' && array[1] == 'i' && array[2] == 'n') {
-                item.type = 's';
-                item.value = 0;
-                Stack_o.push(item);
+                Stack_o.push('s');
                 continue;
             }
             if (array[0] == 'c' && array[1] == 'o' && array[2] == 's') {
-                item.type = 'c';
-                item.value = 0;
-                Stack_o.push(item);
+                Stack_o.push('c');
                 continue;
             }
             if (array[0] == 't' && array[1] == 'a' && array[2] == 'n') {
-                item.type = 't';
-                item.value = 0;
-                Stack_o.push(item);
+                Stack_o.push('t');
                 continue;
             }
             if (array[0] == 'c' && array[1] == 't' && array[2] == 'g') {
-                item.type = 'g';
-                item.value = 0;
-                Stack_o.push(item);
+                Stack_o.push('g');
                 continue;
             }
             if (array[0] == 'e' && array[1] == 'x' && array[2] == 'p') {
-                item.type = 'e';
-                item.value = 0;
-                Stack_o.push(item);
+                Stack_o.push('e');
                 continue;
             }
             else {
@@ -203,44 +184,36 @@ int main() {
         }
         if ((Ch >= '0' && Ch <= '9') || (Ch == '-' && flag == 1) || Ch == '.') {
             iss >> value;
-            item.type = '0';
-            item.value = value;
-            Stack_n.push(item);
+            Stack_n.push(value);
             flag = 0;
             continue;
         }
         if (Ch == '+' || Ch == '-' || Ch == '*' || Ch == '/') {
             if (Stack_o.size() == 0) {
-                item.type = Ch;
-                item.value = 0;
-                Stack_o.push(item);
+                Stack_o.push(Ch);
                 iss.ignore();
                 continue;
             }
-            if (Stack_o.size() != 0 && Rang(Ch) > Rang(Stack_o.top().type)) {
-                item.type = Ch;
-                item.value = 0;
-                Stack_o.push(item);
+            if (Stack_o.size() != 0 && Rang(Ch) > Rang(Stack_o.top())) {
+                Stack_o.push(Ch);
                 iss.ignore();
                 continue;
             }
-            if (Stack_o.size() != 0 && Rang(Ch) <= Rang(Stack_o.top().type)) {
-                if (!Math(Stack_n, Stack_o, item)) {
+            if (Stack_o.size() != 0 && Rang(Ch) <= Rang(Stack_o.top())) {
+                if (!Math(Stack_n, Stack_o)) {
                     return 1;
                 }
                 continue;
             }
         }
         if (Ch == '(') {
-            item.type = Ch;
-            item.value = 0;
-            Stack_o.push(item);
+            Stack_o.push(Ch);
             iss.ignore();
             continue;
         }
         if (Ch == ')') {
-            while (Stack_o.top().type != '(') {
-                if (!Math(Stack_n, Stack_o, item)) {
+            while (Stack_o.top() != '(') {
+                if (!Math(Stack_n, Stack_o)) {
                     return 1;
                 }
                 continue;
@@ -253,10 +226,10 @@ int main() {
         return 1;
     }
     while (Stack_o.size() != 0) {
-        if (!Math(Stack_n, Stack_o, item)) {
+        if (!Math(Stack_n, Stack_o)) {
             return 1;
         }
     }
-    cout << "Результат: " << Stack_n.top().value << endl;
+    cout << "Результат: " << Stack_n.top() << endl;
     return 0;
 }
